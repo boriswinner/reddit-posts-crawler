@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 from praw_reddit_api import PrawRedditApi
 from tqdm import tqdm
 import sys
+import time
 
 SUBREDDIT = "CryptoCurrency"
-SEARCH_WORDS = ["BTT", "BitTorrent Token"]
 PRAW = PrawRedditApi()
 
 class PushshiftApi:
@@ -50,10 +50,15 @@ class PushshiftApi:
                            "selftext:not='[removed]'&"
                            "q:not='[deleted]'&"
                            "size=100".format(subreddit, str(int(start_timestamp)), str(int(end_timestamp))))  # max size = 100
-        if (res.status_code != 200):
+        if (res.status_code == 429):
+            print("Too many requests. Waiting 1 minute...")
+            time.sleep(60)
+            return []
+        elif (res.status_code != 200):
             print("WARNING! Incorrect request! Skipping...")
             print(res.request)
             print(res.status_code)
+            return []
         else:
             try:
                 data = self.process_posts(res.json()["data"])
@@ -69,10 +74,13 @@ class PushshiftApi:
             temp_start_timestamp = start_timestamp
             temp_end_timestamp = datetime.timestamp(datetime.fromtimestamp(start_timestamp) + timedelta(minutes=30))
             print("Requesting data starting at {}...".format(datetime.fromtimestamp(temp_start_timestamp).ctime()))
-            res = self.request_data(SUBREDDIT, temp_start_timestamp, temp_end_timestamp)
-            res_array.extend(res)
+            try:
+                res = self.request_data(SUBREDDIT, temp_start_timestamp, temp_end_timestamp)
+                res_array.extend(res)
+                print("Proccessed {} items.".format(len(res)))
+            except Exception as e:
+                print("Unknown Error when requesting: {}".format(e))
             start_timestamp = temp_end_timestamp
-            print("Proccessed {} items.".format(len(res)))
 
         return res_array
 
