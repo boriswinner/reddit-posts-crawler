@@ -1,7 +1,7 @@
 import requests
 import json
 
-class RedditCrawler:
+class RedditApi:
     def __init__(self):
         self.TOKEN_FILENAME = "TOKEN.TXT"
         self.TOKEN = ""
@@ -58,11 +58,6 @@ class RedditCrawler:
             except:
                 print("ERROR: Bad result")
                 return []
-
-    def strip_comments(self, data):
-        # data["data"]
-        with open('afefef.json', 'w') as f:
-            json.dump(data, f, indent=2)
 
 
 def get_comments_of_post(post_id):
