@@ -142,3 +142,6 @@ dataset/
 *.png
 .idea
 *.json
+*.csv
+*.zip
+*.rar
