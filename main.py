@@ -10,5 +10,5 @@ pushshift_api = PushshiftApi()
 data = pushshift_api.request_by_hours(DATE_FROM, DATE_TO)
 
 with open('data_{}_{}.json'.format(DATE_FROM, DATE_TO), 'w') as f:
-    print("Success! Writing data to data.json...")
+    print("Success! Writing data to data_{}_{}.json...".format(DATE_FROM, DATE_TO))
     json.dump(data, f, indent=2)
